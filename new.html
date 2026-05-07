@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aaradhy Gaur // Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&family=Lexend:wght@400;700;900&display=swap" rel="stylesheet">
+
+<!-- ╔══════════════════════════════════════════════════════════╗
+     ║  ✏️  CUSTOMIZE: edit PORTFOLIO_DATA in the <script>     ║
+     ║     at the bottom of this file                          ║
+     ╚══════════════════════════════════════════════════════════╝ -->
+
+<style>
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: #050508; color: #fff; font-family: 'Lexend', sans-serif; overflow-x: hidden; cursor: none; }
+a, button { cursor: none; }
+
+/* ── CUSTOM CURSOR ── */
+#cur-dot {
+  width: 6px; height: 6px; background: #fff; border-radius: 50%;
+  position: fixed; pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%); transition: background 0.4s, transform 0.1s;
+}
+#cur-ring {
+  width: 32px; height: 32px; border: 2px solid rgba(255,255,255,0.7); border-radius: 50%;
+  position: fixed; pointer-events: none; z-index: 9998;
+  transform: translate(-50%,-50%); transition: width 0.2s, height 0.2s, border-color 0.4s;
+}
+body.hovering #cur-ring { width: 58px; height: 58px; }
+
+/* ── BG CANVAS (FIXED) ── */
+#bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+
+/* ── HUD - TOP LEFT ── */
+#hud {
+  position: fixed; top: 24px; left: 24px; z-index: 100;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  color: rgba(255,255,255,0.45); line-height: 1.8;
+  transition: color 0.5s;
+}
+#energy-bar-track {
+  width: 140px; height: 3px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  margin: 4px 0 6px;
+}
+#energy-bar-fill { height: 100%; width: 0%; background: #4444ff; transition: width 0.4s, background 0.6s; }
+#mode-badge {
+  margin-top: 6px; padding: 2px 8px; border: 1px solid #ffe566;
+  font-size: 9px; letter-spacing: 2px; color: #ffe566; display: inline-block;
+  opacity: 0; transition: opacity 0.5s, color 0.5s, border-color 0.5s;
+}
+
+/* ── CAFFEINE COUNTER - BOTTOM RIGHT ── */
+#caffeine-hud {
+  position: fixed; bottom: 24px; right: 24px; z-index: 100;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  color: rgba(255,255,255,0.3); text-align: right; line-height: 1.8;
+}
+
+/* ── OPS COUNTER - BOTTOM LEFT ── */
+#ops-hud {
+  position: fixed; bottom: 24px; left: 24px; z-index: 100;
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  color: rgba(255,255,255,0.2); line-height: 1.6;
+}
+
+/* ── SECTIONS ── */
+section {
+  position: relative; z-index: 10;
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  padding: 100px 5vw;
+}
+.container { max-width: 1100px; width: 100%; }
+
+/* ── HERO ── */
+#hero { flex-direction: column; justify-content: center; padding-top: 120px; }
+.hero-eyebrow {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  color: rgba(255,255,255,0.35); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 20px;
+}
+.hero-name {
+  font-size: clamp(40px, 8vw, 90px); font-weight: 900;
+  line-height: 0.88; margin-bottom: 28px; letter-spacing: -2px;
+}
+.hero-name .accent { color: #ffe566; position: relative; display: inline-block; }
+.hero-sub {
+  font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 2;
+  color: rgba(255,255,255,0.45); margin-bottom: 44px;
+}
+.hero-sub .dim { color: rgba(255,255,255,0.2); }
+.hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; }
+
+.scroll-hint {
+  position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  font-family: 'JetBrains Mono', monospace; font-size: 9px;
+  color: rgba(255,255,255,0.2); letter-spacing: 3px;
+  animation: float 3s ease-in-out infinite;
+}
+.scroll-bar {
+  width: 1px; height: 50px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.3), transparent);
+}
+@keyframes float { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
+
+/* ── BENTO GRID ── */
+.bento-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; }
+
+/* ── BENTO CARD ── */
+.bcard {
+  border: 2px solid rgba(255,255,255,0.1); background: rgba(10,10,20,0.6);
+  padding: 28px; position: relative; overflow: hidden;
+  backdrop-filter: blur(6px);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.3s;
+}
+.bcard:hover {
+  transform: translate(3px,3px);
+  border-color: rgba(255,255,255,0.35);
+  box-shadow: -3px -3px 0 rgba(255,255,255,0.15);
+}
+.bcard::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 60%);
+  pointer-events: none;
+}
+/* Yellow accent cards */
+.bcard-yellow  { border-color: rgba(255,229,102,0.25); background: rgba(255,229,102,0.04); }
+.bcard-lime    { border-color: rgba(204,255,0,0.2);    background: rgba(204,255,0,0.03);   }
+.bcard-cyan    { border-color: rgba(0,229,255,0.2);    background: rgba(0,229,255,0.03);   }
+.bcard-magenta { border-color: rgba(255,0,170,0.2);    background: rgba(255,0,170,0.03);   }
+.bcard-dark    { background: rgba(0,0,0,0.7); }
+
+/* ── SECTION LABELS ── */
+.sec-tag {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  color: rgba(255,255,255,0.3); letter-spacing: 3px; text-transform: uppercase;
+  margin-bottom: 12px; display: block;
+}
+.sec-tag.y { color: rgba(255,229,102,0.5); }
+.sec-tag.l { color: rgba(204,255,0,0.5);   }
+.sec-tag.c { color: rgba(0,229,255,0.5);   }
+.sec-tag.m { color: rgba(255,0,170,0.5);   }
+
+/* ── TAGS / CHIPS ── */
+.tag {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+  padding: 3px 10px; border: 1px solid rgba(255,255,255,0.2);
+  display: inline-block; margin: 3px 3px 3px 0; background: rgba(255,255,255,0.04);
+  transition: background 0.3s, border-color 0.3s;
+}
+.tag-y { background: #ffe566; color: #000; border-color: #ffe566; }
+.tag-l { background: #ccff00; color: #000; border-color: #ccff00; }
+.tag-c { background: #00e5ff; color: #000; border-color: #00e5ff; }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-block; padding: 13px 32px;
+  border: 2px solid rgba(255,255,255,0.7); font-family: 'Lexend', sans-serif;
+  font-weight: 700; font-size: 14px; color: #fff; text-decoration: none;
+  background: transparent; box-shadow: 4px 4px 0 rgba(255,255,255,0.4);
+  transition: transform 0.1s, box-shadow 0.1s, background 0.2s, color 0.2s;
+  cursor: none;
+}
+.btn:hover { transform: translate(3px,3px); box-shadow: 1px 1px 0 rgba(255,255,255,0.4); }
+.btn-yellow { background: #ffe566; border-color: #ffe566; color: #000; box-shadow: 4px 4px 0 #ffe566; }
+.btn-yellow:hover { background: #fff; border-color: #fff; box-shadow: 1px 1px 0 #fff; }
+
+/* ── REVEAL ANIMATIONS ── */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.9s ease, transform 0.9s ease; }
+.reveal.in { opacity: 1; transform: none; }
+.delay-1 { transition-delay: 0.1s; } .delay-2 { transition-delay: 0.2s; }
+.delay-3 { transition-delay: 0.35s; } .delay-4 { transition-delay: 0.5s; }
+
+/* ── SKILL BARS ── */
+.skill-row   { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+.skill-name  { font-family:'JetBrains Mono',monospace; font-size:12px; color:rgba(255,255,255,0.45); width:100px; flex-shrink:0; }
+.skill-track { flex:1; height:5px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.1); }
+.skill-fill  { height:100%; width:0%; background:#ffe566; transition:width 1.4s cubic-bezier(0.23,1,0.32,1); }
+.skill-pct   { font-family:'JetBrains Mono',monospace; font-size:11px; color:rgba(255,255,255,0.3); width:32px; text-align:right; }
+
+/* ── PROJECT BIG NUMBER ── */
+.proj-num {
+  position:absolute; right:16px; top:10px;
+  font-size:88px; font-weight:900; line-height:1;
+  color:rgba(255,255,255,0.03); font-family:'Lexend',sans-serif;
+  pointer-events:none; user-select:none;
+}
+
+/* ── GLITCH EFFECT (activates at high energy) ── */
+.glitch { position:relative; }
+.glitch::before, .glitch::after {
+  content: attr(data-g); position:absolute; left:0; top:0;
+  opacity:0; transition:opacity 0.3s;
+}
+.glitch::before { color:#0ff; animation:g1 0.35s infinite; }
+.glitch::after  { color:#f0f; animation:g2 0.35s 0.08s infinite; }
+body.max-energy .glitch::before,
+body.max-energy .glitch::after { opacity:0.65; }
+@keyframes g1 { 0%,100%{clip-path:inset(0 0 92% 0);transform:translate(-2px)} 50%{clip-path:inset(35% 0 50% 0);transform:translate(2px)} }
+@keyframes g2 { 0%,100%{clip-path:inset(80% 0 0 0);transform:translate(2px)}  50%{clip-path:inset(20% 0 65% 0);transform:translate(-2px)} }
+
+/* ── CONTACT FORM ── */
+.cf-input {
+  width:100%; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.15);
+  border-bottom:2px solid rgba(255,255,255,0.2); color:#fff; padding:14px 16px;
+  font-family:'JetBrains Mono',monospace; font-size:13px; outline:none; margin-bottom:12px;
+  transition: border-color 0.2s;
+}
+.cf-input:focus { border-color:#ffe566; }
+textarea.cf-input { resize:none; height:110px; }
+
+/* ── SOCIAL LINKS ── */
+.social-link {
+  display:flex; align-items:center; gap:12px; padding:14px 16px;
+  border:1px solid rgba(255,255,255,0.1); text-decoration:none; color:#fff;
+  font-weight:700; font-size:13px; transition:all 0.15s; margin-bottom:10px;
+  cursor:none;
+}
+.social-link:hover { border-color:rgba(255,229,102,0.6); background:rgba(255,229,102,0.07); color:#ffe566; }
+.social-link .arrow { margin-left:auto; opacity:0.3; transition:opacity 0.15s, transform 0.15s; }
+.social-link:hover .arrow { opacity:1; transform:translate(3px,-3px); }
+
+/* ── JSON CODE BLOCK ── */
+.json-line { font-family:'JetBrains Mono',monospace; font-size:13px; line-height:2.1; }
+.j-key   { color:#ffe566; }
+.j-str   { color:#ccff00; }
+.j-num   { color:#00e5ff; }
+.j-bool  { color:#ff6b6b; }
+
+/* ── DATA STREAM (high energy) ── */
+#data-stream {
+  position:fixed; top:0; right:0; width:200px; height:100vh;
+  overflow:hidden; pointer-events:none; z-index:5;
+  opacity:0; transition:opacity 0.5s;
+  font-family:'JetBrains Mono',monospace; font-size:10px;
+  color:rgba(204,255,0,0.15); padding:20px 10px;
+  line-height:1.5;
+}
+body.max-energy #data-stream { opacity:1; }
+
+/* ── MOBILE ── */
+@media(max-width:768px){
+  .bento-grid{grid-template-columns:1fr}
+  .bcard{grid-column:span 1!important}
+  .hero-name{font-size:clamp(32px,10vw,60px)}
+  section{padding:80px 4vw}
+}
+</style>
+</head>
+<body>
+
+<!-- CUSTOM CURSOR -->
+<div id="cur-dot" style="top:-100px;left:-100px"></div>
+<div id="cur-ring" style="top:-100px;left:-100px"></div>
+
+<!-- PARTICLE CANVAS -->
+<canvas id="bg"></canvas>
+
+<!-- HUD - ENERGY BAR -->
+<div id="hud">
+  <div>ENERGY <span id="e-pct" style="color:#fff">000</span>%</div>
+  <div id="energy-bar-track"><div id="energy-bar-fill"></div></div>
+  <div>♥ <span id="bpm-val">58</span> BPM</div>
+  <div id="ops-inline">OPS <span id="ops-val">0</span>/s</div>
+  <div id="mode-badge">HYPERFOCUS</div>
+</div>
+
+<!-- CAFFEINE HUD -->
+<div id="caffeine-hud">
+  ☕ <span id="mg-val">0</span>mg caffeine<br>
+  <span id="cup-icons">⬜⬜⬜⬜⬜</span>
+</div>
+
+<!-- DATA STREAM OVERLAY -->
+<div id="data-stream" id="data-stream"></div>
+
+<!-- ══════════════════════════════════════════════════
+     SECTION 1  /  HERO  /  DORMANT → AWAKENING
+     ══════════════════════════════════════════════════ -->
+<section id="hero">
+  <div class="container">
+    <p class="hero-eyebrow reveal">// initializing portfolio...</p>
+    <h1 class="hero-name reveal delay-1">
+      <span id="hero-first-name">AARADHY</span><br>
+      <span class="accent glitch" id="hero-last-name" data-g="Gaur.">GAUR.</span>
+    </h1>
+    <div class="hero-sub reveal delay-2">
+      <span class="dim">→ </span>BCA Student · Galgotias University<br>
+      <span class="dim">→ </span>Full-Stack Dev + AI Orchestrator<br>
+      <span class="dim">→ </span>Team Svarog — Hackathon Lead<br>
+      <span class="dim">→ </span><span style="color:#00e676">●</span>&nbsp; Open to Collaborate
+    </div>
+    <div class="hero-ctas reveal delay-3">
+      <a href="#projects" class="btn btn-yellow">View Work →</a>
+      <a href="#contact"  class="btn">Say Hi</a>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <div class="scroll-bar"></div>
+    SCROLL
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     SECTION 2  /  ABOUT  /  AWAKENING
+     ══════════════════════════════════════════════════ -->
+<section id="about">
+  <div class="container">
+    <div class="bento-grid">
+
+      <!-- Bio text -->
+      <div class="bcard reveal" style="grid-column:span 7">
+        <span class="sec-tag">// 001 — about.md</span>
+        <h2 style="font-size:38px;font-weight:900;line-height:1.1;margin-bottom:20px">
+          Not just another<br><span style="color:#ffe566">developer.</span>
+        </h2>
+        <p style="font-size:15px;color:rgba(255,255,255,0.65);line-height:1.9;margin-bottom:14px">
+          I'm a first-year BCA student who decided waiting to "be ready" was for people without caffeine and a GitHub account. I build full-stack apps, orchestrate LLM pipelines, and obsess over the details others call irrelevant.
+        </p>
+        <p style="font-size:14px;color:rgba(255,255,255,0.4);line-height:1.9">
+          Team Svarog taught me that the best code lives at the intersection of 3am energy, hyperfocus mode, and one teammate who actually understands your architecture.
+        </p>
+      </div>
+
+      <!-- JSON stats block -->
+      <div class="bcard bcard-yellow reveal delay-1" style="grid-column:span 5">
+        <span class="sec-tag y">// stats.json</span>
+        <div id="json-stats">
+          <div class="json-line"><span class="j-key">"year"</span>: <span class="j-str">"1st BCA"</span>,</div>
+          <div class="json-line"><span class="j-key">"uni"</span>: <span class="j-str">"Galgotias"</span>,</div>
+          <div class="json-line"><span class="j-key">"team"</span>: <span class="j-str">"Team Svarog"</span>,</div>
+          <div class="json-line"><span class="j-key">"caffeine"</span>: <span class="j-bool" id="caffeine-json">"critical"</span>,</div>
+          <div class="json-line"><span class="j-key">"focus"</span>: <span class="j-bool">true</span>,</div>
+          <div class="json-line"><span class="j-key">"ships_at"</span>: <span class="j-str">"3am"</span>,</div>
+          <div class="json-line"><span class="j-key">"open_to"</span>: <span class="j-str">"everything"</span></div>
+        </div>
+      </div>
+
+      <!-- Trait chips -->
+      <div class="bcard reveal delay-2" style="grid-column:span 12">
+        <span class="sec-tag">// personality_traits[]</span>
+        <div>
+          <span class="tag tag-y">hyperfocused</span>
+          <span class="tag tag-l">pattern seeker</span>
+          <span class="tag tag-c">AI-obsessed</span>
+          <span class="tag">3am coder</span>
+          <span class="tag">system thinker</span>
+          <span class="tag">ships fast</span>
+          <span class="tag">Football analytics nerd</span>
+          <span class="tag tag-y">team lead</span>
+          <span class="tag">detail junkie</span>
+          <span class="tag tag-l">always learning</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     SECTION 3  /  PROJECTS  /  FOCUSED → CAFFEINATED
+     ══════════════════════════════════════════════════ -->
+<section id="projects">
+  <div class="container">
+    <p class="sec-tag reveal">// 002 — projects.tsx</p>
+    <h2 class="reveal delay-1" style="font-size:clamp(38px,6vw,60px);font-weight:900;line-height:0.95;margin-bottom:44px">
+      Things I've<br><span style="color:#ccff00">shipped.</span>
+    </h2>
+
+    <div class="bento-grid">
+
+      <!-- LexiGuid -->
+      <div class="bcard bcard-yellow reveal" style="grid-column:span 7;padding:36px">
+        <div class="proj-num">01</div>
+        <span class="sec-tag y">FEATURED PROJECT</span>
+        <h3 style="font-size:34px;font-weight:900;margin-bottom:10px">LexiGuid AI </h3>
+        <p style="color:rgba(255,255,255,0.55);font-size:14px;line-height:1.85;margin-bottom:22px;max-width:380px">
+          Legal AI chatbot powered by RAG pipelines and LLM orchestration. Makes complex legal questions answerable for everyone — not just lawyers with ₹500/hr billing rates.
+        </p>
+        <div style="margin-bottom:26px">
+          <span class="tag tag-y">LangChain</span><span class="tag tag-l">RAG</span>
+          <span class="tag tag-c">Next.js</span><span class="tag">Pinecone</span><span class="tag">OpenAI</span>
+        </div>
+        <a href="https://github.com/aaradhygaur22/LexiGuid-Chat-bot" class="btn" style="font-size:13px;padding:10px 22px">→ Click</a>
+      </div>
+
+      <!-- SaveQuest -->
+      <div class="bcard bcard-lime reveal delay-1" style="grid-column:span 5">
+        <div class="proj-num" style="font-size:60px">02</div>
+        <span class="sec-tag l">SIDE PROJECT</span>
+        <h3 style="font-size:26px;font-weight:900;margin-bottom:10px;color:#ccff00">SaveQuest  </h3>
+        <p style="color:rgba(255,255,255,0.45);font-size:13px;line-height:1.85;margin-bottom:16px">
+          Gamified personal finance. Save money, gain XP, defeat debt. RPG mechanics for your bank account.
+        </p>
+        <div style="margin-bottom:20px">
+          <span class="tag">React</span><span class="tag">Tailwind</span><span class="tag">Firebase</span>
+        </div>
+        <a href="#" class="btn" style="font-size:13px;padding:10px 22px;border-color:#ccff00;color:#ccff00;box-shadow:3px 3px 0 #ccff00">→ Live Demo</a>
+      </div>
+
+      <!-- Team Svarog -->
+      <div class="bcard bcard-magenta reveal" style="grid-column:span 7;display:flex;align-items:center;gap:24px">
+        <div style="font-size:52px;flex-shrink:0">W</div>
+        <div>
+          <span class="sec-tag m">LEADERSHIP</span>
+          <h3 style="font-size:22px;font-weight:900;margin-bottom:8px">Team Svarog</h3>
+          <p style="color:rgba(255,255,255,0.45);font-size:13px;line-height:1.7">
+           Successfully overclocked my brain for 48 hours to lead a team from 'Hello World' to a shipped product. Warranty voided by lack of sleep.
+          </p>
+        </div>
+        <span class="tag" style="margin-left:auto;flex-shrink:0;border-color:rgba(255,0,170,0.5);color:rgba(255,100,200,0.9)">LEAD</span>
+      </div>
+
+      <!-- Coming soon -->
+      <div class="bcard reveal delay-2" style="grid-column:span 5;border-style:dashed;border-color:rgba(255,255,255,0.08);opacity:0.45">
+        <span class="sec-tag">BREWING...</span>
+        <h3 style="font-size:22px;font-weight:900;margin-bottom:8px;color:rgba(255,255,255,0.2)">??? × AI Agents</h3>
+        <p style="color:rgba(255,255,255,0.2);font-size:13px;line-height:1.7">
+          Something agentic. It's not ready. Neither am I. That's kind of the point.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     SECTION 4  /  SKILLS  /  CAFFEINATED → HIGH
+     ══════════════════════════════════════════════════ -->
+<section id="skills">
+  <div class="container">
+    <div class="bento-grid">
+
+      <!-- Skill bars -->
+      <div class="bcard reveal" style="grid-column:span 6">
+        <span class="sec-tag">// 003 — skills.json</span>
+        <h2 style="font-size:32px;font-weight:900;margin-bottom:28px">The <span style="color:#ffe566">stack.</span></h2>
+        <div id="skill-bars-container"><!-- injected by JS --></div>
+      </div>
+
+      <!-- Currently learning -->
+      <div class="bcard bcard-cyan reveal delay-1" style="grid-column:span 6">
+        <span class="sec-tag c">// currently_learning[]</span>
+        <h2 style="font-size:28px;font-weight:900;margin-bottom:20px">Always<br><span style="color:#00e5ff">upgrading.</span></h2>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:rgba(255,255,255,0.5);line-height:2.2">
+          <div>▸ Rust (the language, not the game)</div>
+          <div>▸ C++</div>
+          <div>▸ System design patterns</div>
+          <div>▸ LLM fine-tuning workflows</div>
+          <div>▸ WebGL + Three.js <span style="color:rgba(255,255,255,0.25);font-size:11px">(meta, I know)</span></div>
+          <div>▸ Docker basics</div>
+        </div>
+        <div style="margin-top:20px">
+          <span class="tag tag-c">n8n</span><span class="tag">Flowise</span>
+          <span class="tag tag-y">LlamaIndex</span><span class="tag">LangGraph</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     SECTION 5  /  AI FOCUS  /  MAX ENERGY
+     ══════════════════════════════════════════════════ -->
+<section id="aifocus" style="background:rgba(15,0,30,0.5)">
+  <div class="container">
+    <p class="sec-tag reveal">// 004 — ai_focus.py</p>
+
+    <div class="bento-grid">
+
+      <div class="bcard bcard-dark reveal" style="grid-column:span 12;padding:44px">
+        <h2 class="glitch" data-g="Agentic AI Workflows"
+            style="font-size:clamp(32px,5vw,58px);font-weight:900;margin-bottom:16px;color:#ccff00">
+          Agentic AI Workflows
+        </h2>
+        <p style="font-size:16px;color:rgba(255,255,255,0.55);max-width:600px;line-height:1.9;margin-bottom:36px">
+          I don't just consume AI tools — I orchestrate them. RAG pipelines, multi-agent systems, and LLM-powered automation are my playground. Currently obsessed with building infrastructure that makes AI actually useful, not just impressive in demos.
+        </p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px">
+          <div class="bcard bcard-lime" style="padding:20px">
+            <div style="font-size:24px;margin-bottom:10px">🔗</div>
+            <div style="font-weight:700;margin-bottom:6px;font-size:15px">LangChain</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,0.35)">LLM orchestration framework</div>
+          </div>
+          <div class="bcard bcard-cyan" style="padding:20px">
+            <div style="font-size:24px;margin-bottom:10px">📚</div>
+            <div style="font-weight:700;margin-bottom:6px;font-size:15px">RAG Pipelines</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,0.35)">Retrieval augmented generation</div>
+          </div>
+          <div class="bcard bcard-magenta" style="padding:20px">
+            <div style="font-size:24px;margin-bottom:10px">🤖</div>
+            <div style="font-weight:700;margin-bottom:6px;font-size:15px">AI Agents</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,0.35)">Autonomous task execution</div>
+          </div>
+          <div class="bcard bcard-yellow" style="padding:20px">
+            <div style="font-size:24px;margin-bottom:10px">⚙️</div>
+            <div style="font-weight:700;margin-bottom:6px;font-size:15px">n8n / Flowise</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,0.35)">Visual automation builders</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     SECTION 6  /  CONTACT  /  MAXIMUM OVERDRIVE
+     ══════════════════════════════════════════════════ -->
+<section id="contact">
+  <div class="container">
+    <p class="sec-tag reveal">// 005 — contact.sh</p>
+
+    <div class="bento-grid">
+
+      <div class="reveal" style="grid-column:span 5">
+        <h2 style="font-size:clamp(44px,7vw,76px);font-weight:900;line-height:0.9;margin-bottom:28px">
+          Let's<br>build<br><span class="glitch" data-g="something." style="color:#ffe566">something.</span>
+        </h2>
+        <p style="color:rgba(255,255,255,0.45);font-size:14px;line-height:1.85;margin-bottom:32px;max-width:340px">
+          Got a wild idea? Need someone obsessive enough to actually ship it? I'm probably awake.
+        </p>
+        <a href="mailto:[aaradhygaur22@gmail.com]" class="social-link"><span>Email</span><span class="arrow">↗</span></a>
+        <a href="https://github.com/aaradhygaur22"   class="social-link" target="_blank"><span>⌥ GitHub</span><span class="arrow">↗</span></a>
+        <a href="https://www.linkedin.com/in/aaradhy-gaur-0569a6387/" class="social-link" target="_blank"><span>in LinkedIn</span><span class="arrow">↗</span></a>
+        <a href=""  class="social-link" target="_blank"><span>𝕏 Twitter</span><span class="arrow">↗</span></a>
+      </div>
+
+      <div class="bcard reveal delay-2" style="grid-column:span 7;padding:36px">
+        <span class="sec-tag">// QUICK MESSAGE</span>
+        <h3 style="font-size:22px;font-weight:900;margin-bottom:24px">Drop a message.</h3>
+        <input  class="cf-input" type="text"  placeholder="Name" /><br>
+        <input  class="cf-input" type="email" placeholder="Email" /><br>
+        <textarea class="cf-input" placeholder="Tell me about the project..."></textarea>
+        <button class="btn btn-yellow" style="width:100%;text-align:center;padding:14px;cursor:none;border:none">
+          → Send It
+        </button>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     THREE.JS + ALL INTERACTIONS
+     ══════════════════════════════════════════════════ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+'use strict';
+
+// ╔═══════════════════════════════════════════╗
+// ║  ✏️  EASY CUSTOMIZATION SECTION          ║
+// ╚═══════════════════════════════════════════╝
+const CONFIG = {
+  firstName: "AARADHY",
+  lastName:  "GAUR.",
+
+  skills: [
+    { name: 'React / Next.js', pct: 85 },
+    { name: 'Python',          pct: 78 },
+    { name: 'Tailwind CSS',    pct: 90 },
+    { name: 'TypeScript',      pct: 70 },
+    { name: 'C++',             pct: 62 },
+    { name: 'LangChain',       pct: 72 },
+    { name: 'Node.js',         pct: 68 },
+  ],
+
+  // Particle count — lower if laggy on mobile
+  PARTICLE_COUNT: 1600,
+
+  // Color progression by scroll (0–1)
+  // hue in degrees (0=red, 120=green, 240=blue)
+  energyColors: [
+    { at: 0.00, hue: 238, sat: 75, lit: 45 },  // dormant   → blue
+    { at: 0.20, hue: 190, sat: 85, lit: 50 },  // awakening → cyan
+    { at: 0.45, hue: 55,  sat: 90, lit: 55 },  // focused   → yellow
+    { at: 0.65, hue: 80,  sat: 95, lit: 50 },  // caffeinated → lime
+    { at: 0.85, hue: 300, sat: 95, lit: 55 },  // hyperfocus → magenta
+  ],
+};
+
+// ─────────────────────────────────────────────
+//  INJECT HERO NAME FROM CONFIG
+// ─────────────────────────────────────────────
+document.getElementById('hero-first-name').textContent = CONFIG.firstName;
+const lastEl = document.getElementById('hero-last-name');
+lastEl.textContent = CONFIG.lastName;
+lastEl.setAttribute('data-g', CONFIG.lastName);
+
+// ─────────────────────────────────────────────
+//  BUILD SKILL BARS
+// ─────────────────────────────────────────────
+const skillContainer = document.getElementById('skill-bars-container');
+CONFIG.skills.forEach(s => {
+  skillContainer.insertAdjacentHTML('beforeend', `
+    <div class="skill-row">
+      <span class="skill-name">${s.name}</span>
+      <div class="skill-track"><div class="skill-fill" data-pct="${s.pct}"></div></div>
+      <span class="skill-pct">${s.pct}%</span>
+    </div>
+  `);
+});
+
+// ─────────────────────────────────────────────
+//  CUSTOM CURSOR
+// ─────────────────────────────────────────────
+const dot  = document.getElementById('cur-dot');
+const ring = document.getElementById('cur-ring');
+let mx = -200, my = -200, rx = -200, ry = -200;
+
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+document.querySelectorAll('a,button,.bcard,.btn,.social-link').forEach(el => {
+  el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+  el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+});
+
+(function cursorLoop() {
+  rx += (mx - rx) * 0.11;
+  ry += (my - ry) * 0.11;
+  dot.style.left  = mx + 'px';
+  dot.style.top   = my + 'px';
+  ring.style.left = rx + 'px';
+  ring.style.top  = ry + 'px';
+  requestAnimationFrame(cursorLoop);
+})();
+
+// ─────────────────────────────────────────────
+//  SCROLL REVEAL
+// ─────────────────────────────────────────────
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// Skill bar trigger
+const skillObs = new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting) {
+    document.querySelectorAll('.skill-fill').forEach(el => {
+      setTimeout(() => { el.style.width = el.dataset.pct + '%'; }, 200);
+    });
+    skillObs.disconnect();
+  }
+}, { threshold: 0.3 });
+skillObs.observe(document.getElementById('skills'));
+
+// ─────────────────────────────────────────────
+//  THREE.JS PARTICLE SYSTEM
+// ─────────────────────────────────────────────
+const canvas = document.getElementById('bg');
+const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+
+const scene  = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(72, window.innerWidth / window.innerHeight, 0.1, 2000);
+camera.position.z = 420;
+
+const N = CONFIG.PARTICLE_COUNT;
+const positions   = new Float32Array(N * 3);
+const colors      = new Float32Array(N * 3);
+const basePosArr  = new Float32Array(N * 3);
+const vx = new Float32Array(N), vy = new Float32Array(N), vz = new Float32Array(N);
+const col = new THREE.Color();
+
+for (let i = 0; i < N; i++) {
+  const i3 = i * 3;
+  const phi   = Math.acos(2 * Math.random() - 1);
+  const theta = Math.random() * Math.PI * 2;
+  const r     = 100 + Math.pow(Math.random(), 0.7) * 320;
+
+  const x = r * Math.sin(phi) * Math.cos(theta);
+  const y = r * Math.sin(phi) * Math.sin(theta);
+  const z = r * Math.cos(phi);
+  positions[i3] = basePosArr[i3] = x;
+  positions[i3+1] = basePosArr[i3+1] = y;
+  positions[i3+2] = basePosArr[i3+2] = z;
+
+  vx[i] = (Math.random() - 0.5) * 0.4;
+  vy[i] = (Math.random() - 0.5) * 0.4;
+  vz[i] = (Math.random() - 0.5) * 0.15;
+
+  col.setHSL(0.65, 0.75, 0.35 + Math.random() * 0.2);
+  colors[i3] = col.r; colors[i3+1] = col.g; colors[i3+2] = col.b;
+}
+
+const geo = new THREE.BufferGeometry();
+geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+geo.setAttribute('color',    new THREE.BufferAttribute(colors, 3));
+
+const mat = new THREE.PointsMaterial({
+  size: 2.0, vertexColors: true, transparent: true, opacity: 0.7, sizeAttenuation: true,
+});
+const pts = new THREE.Points(geo, mat);
+scene.add(pts);
+
+// ─────────────────────────────────────────────
+//  ENERGY / SCROLL SYSTEM
+// ─────────────────────────────────────────────
+const eBarFill = document.getElementById('energy-bar-fill');
+const ePctEl   = document.getElementById('e-pct');
+const bpmEl    = document.getElementById('bpm-val');
+const modeBadge= document.getElementById('mode-badge');
+const mgEl     = document.getElementById('mg-val');
+const cupsEl   = document.getElementById('cup-icons');
+const opsEl    = document.getElementById('ops-val');
+
+let energy    = 0;   // 0–1
+let targetBpm = 58;
+let smoothBpm = 58;
+let mouseNX   = 0, mouseNY = 0;
+
+const STAGES = [
+  { at:0,    name:'DORMANT',     bpm:58,  barCol:'#4444dd', badge:false },
+  { at:0.20, name:'AWAKENING',   bpm:75,  barCol:'#00aaff', badge:false },
+  { at:0.40, name:'FOCUSED',     bpm:98,  barCol:'#ffe566', badge:true  },
+  { at:0.60, name:'CAFFEINATED', bpm:132, barCol:'#ccff00', badge:true  },
+  { at:0.80, name:'HYPERFOCUS',  bpm:172, barCol:'#ff00aa', badge:true  },
+];
+
+function getStage(e) {
+  let s = STAGES[0];
+  for (const st of STAGES) { if (e >= st.at) s = st; }
+  return s;
+}
+
+function lerpColor(a, b, t) {
+  return { hue: a.hue + (b.hue - a.hue)*t, sat: a.sat + (b.sat-a.sat)*t, lit: a.lit + (b.lit-a.lit)*t };
+}
+function energyToColor(e) {
+  const ec = CONFIG.energyColors;
+  for (let i = 0; i < ec.length - 1; i++) {
+    if (e >= ec[i].at && e <= ec[i+1].at) {
+      const t = (e - ec[i].at) / (ec[i+1].at - ec[i].at);
+      return lerpColor(ec[i], ec[i+1], t);
+    }
+  }
+  return ec[ec.length - 1];
+}
+
+document.addEventListener('mousemove', e => {
+  mouseNX = (e.clientX / window.innerWidth) * 2 - 1;
+  mouseNY = -(e.clientY / window.innerHeight) * 2 + 1;
+});
+
+window.addEventListener('scroll', () => {
+  const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+  energy = Math.min(1, window.scrollY / scrollable);
+
+  const pct   = Math.round(energy * 100);
+  const stage = getStage(energy);
+
+  ePctEl.textContent = String(pct).padStart(3,'0');
+  eBarFill.style.width      = pct + '%';
+  eBarFill.style.background = stage.barCol;
+  targetBpm = stage.bpm + Math.random() * 4 - 2;
+
+  modeBadge.style.opacity    = stage.badge ? '1' : '0';
+  modeBadge.textContent      = stage.name;
+  modeBadge.style.color      = stage.barCol;
+  modeBadge.style.borderColor= stage.barCol;
+
+  const mg = Math.round(energy * 440);
+  mgEl.textContent  = mg;
+  const cups = Math.min(5, Math.floor(mg / 88));
+  cupsEl.textContent = '☕'.repeat(cups) + '⬜'.repeat(5 - cups);
+
+  document.body.classList.toggle('max-energy', energy >= 0.78);
+});
+
+// BPM smooth lerp + OPS counter
+let frameCount = 0;
+setInterval(() => {
+  smoothBpm += (targetBpm - smoothBpm) * 0.08;
+  bpmEl.textContent = Math.round(smoothBpm);
+  const baseOps = Math.round(energy * 8000 + 120);
+  opsEl.textContent = (baseOps + Math.floor(Math.random() * 80 - 40)).toLocaleString();
+}, 120);
+
+// ─────────────────────────────────────────────
+//  DATA STREAM EFFECT (high energy)
+// ─────────────────────────────────────────────
+const streamEl = document.getElementById('data-stream');
+const hexChars = '0123456789ABCDEF';
+function randomHex(len) {
+  return Array.from({length: len}, () => hexChars[Math.floor(Math.random()*16)]).join('');
+}
+setInterval(() => {
+  if (energy < 0.75) return;
+  const line = document.createElement('div');
+  line.textContent = `0x${randomHex(8)} → ${randomHex(4)}:${randomHex(4)}`;
+  streamEl.appendChild(line);
+  if (streamEl.children.length > 30) streamEl.removeChild(streamEl.firstChild);
+}, 80);
+
+// ─────────────────────────────────────────────
+//  ANIMATION LOOP
+// ─────────────────────────────────────────────
+const clock = new THREE.Clock();
+
+function animate() {
+  requestAnimationFrame(animate);
+  frameCount++;
+
+  const delta   = Math.min(clock.getDelta(), 0.05);
+  const elapsed = clock.getElapsedTime();
+  const speed   = 1 + energy * 11;
+  const c       = energyToColor(energy);
+
+  const posAttr = geo.attributes.position;
+  const colAttr = geo.attributes.color;
+
+  const mxW = mouseNX * 350;
+  const myW = mouseNY * 350;
+
+  for (let i = 0; i < N; i++) {
+    const i3 = i * 3;
+
+    // Move
+    posAttr.array[i3]   += vx[i] * speed * delta * 60;
+    posAttr.array[i3+1] += vy[i] * speed * delta * 60;
+    posAttr.array[i3+2] += vz[i] * speed * delta * 60;
+
+    // Elastic return to home
+    const pull = 0.0018 + energy * 0.004;
+    vx[i] += (basePosArr[i3]   - posAttr.array[i3])   * pull;
+    vy[i] += (basePosArr[i3+1] - posAttr.array[i3+1]) * pull;
+    vz[i] += (basePosArr[i3+2] - posAttr.array[i3+2]) * pull;
+
+    // Damping
+    const damp = 0.984;
+    vx[i] *= damp; vy[i] *= damp; vz[i] *= damp;
+
+    // Mouse repel
+    const dx = posAttr.array[i3]   - mxW;
+    const dy = posAttr.array[i3+1] - myW;
+    const dSq = dx*dx + dy*dy;
+    const repR = (80 + energy * 80);
+    if (dSq < repR*repR && dSq > 0.01) {
+      const dist = Math.sqrt(dSq);
+      const f = (repR - dist) / repR * 1.8;
+      vx[i] += (dx/dist) * f;
+      vy[i] += (dy/dist) * f;
+    }
+
+    // Color: base hue + per-particle variation + energy-driven shimmer
+    const pHue  = ((c.hue + (i / N) * 40 + Math.sin(elapsed * 1.5 + i * 0.08) * 15) % 360) / 360;
+    const pSat  = c.sat / 100;
+    const pLit  = (c.lit + Math.sin(elapsed * 2 + i * 0.12) * 5) / 100;
+    col.setHSL(pHue, pSat, pLit);
+    colAttr.array[i3]   = col.r;
+    colAttr.array[i3+1] = col.g;
+    colAttr.array[i3+2] = col.b;
+  }
+
+  posAttr.needsUpdate = true;
+  colAttr.needsUpdate = true;
+
+  // Rotate field
+  pts.rotation.y += delta * (0.04 + energy * 0.25);
+  pts.rotation.x += delta * (0.015 + energy * 0.08);
+
+  // Camera breathe
+  camera.position.x = Math.sin(elapsed * 0.18) * 12 * (1 + energy);
+  camera.position.y = Math.cos(elapsed * 0.13) * 9  * (1 + energy);
+
+  // Size + opacity scale with energy
+  mat.size    = 1.6 + energy * 3.0;
+  mat.opacity = 0.55 + energy * 0.4;
+
+  // Cursor dot + ring tint at high energy
+  if (energy > 0.55) {
+    const hDeg = Math.round(((c.hue % 360) + 360) % 360);
+    const col  = `hsl(${hDeg},100%,70%)`;
+    dot.style.background   = col;
+    ring.style.borderColor = col;
+  } else {
+    dot.style.background   = '#fff';
+    ring.style.borderColor = 'rgba(255,255,255,0.7)';
+  }
+
+  renderer.render(scene, camera);
+}
+
+animate();
+
+// Resize
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// Initial reveal trigger for hero
+setTimeout(() => {
+  document.querySelectorAll('#hero .reveal').forEach(el => el.classList.add('in'));
+}, 100);
+</script>
+</body>
+</html>
