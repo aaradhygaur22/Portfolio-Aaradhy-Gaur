@@ -1,0 +1,9 @@
+# Environment variables — keep secrets out of git
+.env
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/

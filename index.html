@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aaradhy Gaur // Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&family=Lexend:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- CUSTOM CURSOR -->
+  <div id="cur-dot" style="top:-100px;left:-100px"></div>
+  <div id="cur-ring" style="top:-100px;left:-100px"></div>
+
+  <!-- PARTICLE CANVAS -->
+  <canvas id="bg"></canvas>
+
+  <!-- HUD - ENERGY BAR -->
+  <div id="hud">
+    <div>ENERGY <span id="e-pct" style="color:#fff">000</span>%</div>
+    <div id="energy-bar-track"><div id="energy-bar-fill"></div></div>
+    <div>♥ <span id="bpm-val">58</span> BPM</div>
+    <div id="ops-inline">OPS <span id="ops-val">0</span>/s</div>
+    <div id="mode-badge">HYPERFOCUS</div>
+  </div>
+
+  <!-- CAFFEINE HUD -->
+  <div id="caffeine-hud">
+    ☕ <span id="mg-val">0</span>mg caffeine<br>
+    <span id="cup-icons">⬜⬜⬜⬜⬜</span>
+  </div>
+
+  <!-- DATA STREAM OVERLAY -->
+  <div id="data-stream"></div>
+
+  <!-- ══════════════════════════════════════════════════
+      SECTION 1  /  HERO  /  DORMANT → AWAKENING
+      ══════════════════════════════════════════════════ -->
+  <section id="hero">
+    <div class="container">
+      <p class="hero-eyebrow reveal">// initializing portfolio...</p>
+      <h1 class="hero-name reveal delay-1">
+        <span id="hero-first-name">AARADHY</span><br>
+        <span class="accent glitch" id="hero-last-name" data-g="Gaur.">GAUR.</span>
+      </h1>
+      <div class="hero-sub reveal delay-2">
+        <span class="dim">→ </span>BCA Student · Galgotias University<br>
+        <span class="dim">→ </span>Full-Stack Dev + AI Orchestrator<br>
+        <span class="dim">→ </span>Team Svarog — Hackathon Lead<br>
+        <span class="dim">→ </span><span style="color:#00e676">●</span>&nbsp; Open to Collaborate
+      </div>
+      <div class="hero-ctas reveal delay-3">
+        <a href="#projects" class="btn btn-yellow">The Build Log →</a>
+        <a href="#contact"  class="btn">Ping my Terminal</a>
+      </div>
+    </div>
+    <div class="scroll-hint">
+      <div class="scroll-bar"></div>
+      SCROLL
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════
+      SECTION 2  /  ABOUT  /  AWAKENING
+      ══════════════════════════════════════════════════ -->
+  <section id="about">
+    <div class="container">
+      <div class="bento-grid">
+
+        <!-- Bio text -->
+        <div class="bcard reveal" style="grid-column:span 7">
+          <span class="sec-tag">// 001 — about.md</span>
+          <h2 style="font-size:38px;font-weight:900;line-height:1.1;margin-bottom:20px">
+            Not just another<br><span style="color:#E0FB41">developer.</span>
+          </h2>
+          <p style="font-size:15px;color:rgba(255,255,255,0.65);line-height:1.9;margin-bottom:14px">
+            I'm a first-year BCA student who decided waiting to "be ready" was for people without caffeine and a GitHub account. I build full-stack apps, orchestrate LLM pipelines, and obsess over the details others call irrelevant.
+          </p>
+          <p style="font-size:14px;color:rgba(255,255,255,0.4);line-height:1.9">
+            Team Svarog taught me that the best code lives at the intersection of 3am energy, hyperfocus mode, and one teammate who actually understands your architecture.
+          </p>
+        </div>
+
+        <!-- JSON stats block -->
+        <div class="bcard bcard-yellow reveal delay-1" style="grid-column:span 5">
+          <span class="sec-tag y">// stats.json</span>
+          <div id="json-stats">
+            <div class="json-line"><span class="j-key">"year"</span>: <span class="j-str">"1st BCA"</span>,</div>
+            <div class="json-line"><span class="j-key">"uni"</span>: <span class="j-str">"Galgotias"</span>,</div>
+            <div class="json-line"><span class="j-key">"team"</span>: <span class="j-str">"Team Svarog"</span>,</div>
+            <div class="json-line"><span class="j-key">"caffeine"</span>: <span class="j-bool" id="caffeine-json">"critical"</span>,</div>
+            <div class="json-line"><span class="j-key">"focus"</span>: <span class="j-bool">true</span>,</div>
+            <div class="json-line"><span class="j-key">"ships_at"</span>: <span class="j-str">"3am"</span>,</div>
+            <div class="json-line"><span class="j-key">"open_to"</span>: <span class="j-str">"everything"</span></div>
+          </div>
+        </div>
+
+        <!-- Live Status Card -->
+        <div class="bcard bcard-indigo reveal delay-2" style="grid-column:span 12">
+          <span class="sec-tag c">// status.live</span>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <span id="live-status-dot"></span>
+            <span id="live-status" style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#E2E8F0;flex:1;min-width:200px">Solving a hydration error in Next.js...</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#64748B">☕ Caffeine: <span id="live-caffeine">400</span>mg</span>
+            <span class="tag" style="border-color:rgba(99,102,241,0.5);color:#a5b4fc;font-size:10px">LIVE</span>
+          </div>
+        </div>
+
+        <!-- Trait chips -->
+        <div class="bcard reveal delay-2" style="grid-column:span 12">
+          <span class="sec-tag">// personality_traits[]</span>
+          <div>
+            <span class="tag tag-y">hyperfocused</span>
+            <span class="tag tag-l">pattern seeker</span>
+            <span class="tag tag-c">AI-obsessed</span>
+            <span class="tag">3am coder</span>
+            <span class="tag">system thinker</span>
+            <span class="tag">ships fast</span>
+            <span class="tag">Football analytics nerd</span>
+            <span class="tag tag-y">team lead</span>
+            <span class="tag">detail junkie</span>
+            <span class="tag tag-l">always learning</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════
+      SECTION 3  /  PROJECTS  /  FOCUSED → CAFFEINATED
+      ══════════════════════════════════════════════════ -->
+  <section id="projects">
+    <div class="container">
+      <p class="sec-tag reveal">// 002 — projects.tsx</p>
+      <h2 class="reveal delay-1" style="font-size:clamp(38px,6vw,60px);font-weight:900;line-height:0.95;margin-bottom:44px">
+        Things I've<br><span style="color:#E0FB41">shipped.</span>
+      </h2>
+
+      <div class="bento-grid">
+
+        <!-- LexiGuid -->
+        <div class="bcard bcard-yellow reveal" style="grid-column:span 7;padding:36px">
+          <div class="proj-num">01</div>
+          <span class="sec-tag y">PROJECT that actually work (i promise)</span>
+          <h3 style="font-size:34px;font-weight:900;margin-bottom:10px">LexiGuid AI </h3>
+          <p style="color:rgba(255,255,255,0.55);font-size:14px;line-height:1.85;margin-bottom:22px;max-width:380px">
+            Legal AI chatbot powered by RAG pipelines and LLM orchestration. Makes complex legal questions answerable for everyone — not just lawyers with ₹500/hr billing rates.
+          </p>
+          <div style="margin-bottom:16px">
+            <span class="tag tag-y">LangChain</span><span class="tag tag-l">RAG</span>
+            <span class="tag tag-c">Next.js</span><span class="tag">Pinecone</span><span class="tag">OpenAI</span>
+          </div>
+          <!-- Failure Log -->
+          <details class="failure-log" style="margin-bottom:20px">
+            <summary style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;cursor:pointer;color:rgba(255,80,80,0.7);border:1px solid rgba(255,80,80,0.2);padding:5px 12px;display:inline-block">⚠ FAILURE LOG</summary>
+            <div style="margin-top:10px;padding:12px;background:rgba(255,50,50,0.05);border:1px solid rgba(255,80,80,0.1);border-radius:0 6px 2px 8px">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#64748B;line-height:2">
+                <div><span style="color:rgba(255,80,80,0.6)">✗</span> v0.1 — Pinecone index blew up on 10k docs. Lesson: chunk size matters.</div>
+                <div><span style="color:rgba(255,80,80,0.6)">✗</span> v0.3 — Hallucinated case law. Added source-grounding filter.</div>
+                <div><span style="color:rgba(255,180,0,0.6)">△</span> v0.5 — Latency &gt;8s. Switched to streaming responses.</div>
+                <div><span style="color:#E0FB41">✓</span> v1.0 — Shipped. Still not perfect. That's fine.</div>
+              </div>
+            </div>
+          </details>
+          <a href="https://github.com/aaradhygaur22/LexiGuid-Chat-bot" class="btn" style="font-size:13px;padding:10px 22px">→ Click</a>
+        </div>
+
+        <!-- SaveQuest -->
+        <div class="bcard bcard-lime reveal delay-1" style="grid-column:span 5">
+          <div class="proj-num" style="font-size:60px">02</div>
+          <span class="sec-tag l">SIDE PROJECT</span>
+          <h3 style="font-size:26px;font-weight:900;margin-bottom:10px;color:#E0FB41">SaveQuest  </h3>
+          <p style="color:rgba(255,255,255,0.45);font-size:13px;line-height:1.85;margin-bottom:16px">
+            Gamified personal finance. Save money, gain XP, defeat debt. RPG mechanics for your bank account.
+          </p>
+          <div style="margin-bottom:20px">
+            <span class="tag">React</span><span class="tag">Tailwind</span><span class="tag">Firebase</span>
+          </div>
+          <a href="#" class="btn" style="font-size:13px;padding:10px 22px;border-color:#E0FB41;color:#E0FB41;box-shadow:3px 3px 0 #E0FB41">→ Live Demo</a>
+        </div>
+
+        <!-- Team Svarog -->
+        <div class="bcard bcard-magenta reveal" style="grid-column:span 7;display:flex;align-items:center;gap:24px">
+          <div style="font-size:52px;flex-shrink:0">W</div>
+          <div>
+            <span class="sec-tag m">LEADERSHIP</span>
+            <h3 style="font-size:22px;font-weight:900;margin-bottom:8px">Team Svarog</h3>
+            <p style="color:rgba(255,255,255,0.45);font-size:13px;line-height:1.7">
+            Successfully overclocked my brain for 48 hours to lead a team from 'Hello World' to a shipped product. Warranty voided by lack of sleep.
+            </p>
+          </div>
+          <span class="tag" style="margin-left:auto;flex-shrink:0;border-color:rgba(255,0,170,0.5);color:rgba(255,100,200,0.9)">LEAD</span>
+        </div>
+
+        <!-- Coming soon -->
+        <div class="bcard reveal delay-2" style="grid-column:span 5;border-style:dashed;border-color:rgba(255,255,255,0.08);opacity:0.45">
+          <span class="sec-tag">BREWING...</span>
+          <h3 style="font-size:22px;font-weight:900;margin-bottom:8px;color:rgba(255,255,255,0.2)">??? × AI Agents</h3>
+          <p style="color:rgba(255,255,255,0.2);font-size:13px;line-height:1.7">
+            Something agentic. It's not ready. Neither am I. That's kind of the point.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════
+      SECTION 4  /  SKILLS  /  CAFFEINATED → HIGH
+      ══════════════════════════════════════════════════ -->
+  <section id="skills">
+    <div class="container">
+      <div class="bento-grid">
+
+        <!-- Skill bars -->
+        <div class="bcard reveal" style="grid-column:span 6">
+          <span class="sec-tag">// 003 — skills.json</span>
+          <h2 style="font-size:32px;font-weight:900;margin-bottom:28px">The <span style="color:#E0FB41">stack.</span></h2>
+          <div id="skill-bars-container"><!-- injected by JS --></div>
+        </div>
+
+        <!-- Currently learning -->
+        <div class="bcard bcard-cyan reveal delay-1" style="grid-column:span 6">
+          <span class="sec-tag c">// currently_learning[]</span>
+          <h2 style="font-size:28px;font-weight:900;margin-bottom:20px">Always<br><span style="color:#6366F1">upgrading.</span></h2>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:rgba(255,255,255,0.5);line-height:2.2">
+            <div>▸ Rust (the language, not the game)</div>
+            <div>▸ C++</div>
+            <div>▸ System design patterns</div>
+            <div>▸ LLM fine-tuning workflows</div>
+            <div>▸ WebGL + Three.js <span style="color:rgba(255,255,255,0.25);font-size:11px">(meta, I know)</span></div>
+            <div>▸ Docker basics</div>
+          </div>
+          <div style="margin-top:20px">
+            <span class="tag tag-c">n8n</span><span class="tag">Flowise</span>
+            <span class="tag tag-y">LlamaIndex</span><span class="tag">LangGraph</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════
+      SECTION 5  /  AI FOCUS  /  MAX ENERGY
+      ══════════════════════════════════════════════════ -->
+  <section id="aifocus" style="background:rgba(15,0,30,0.5)">
+    <div class="container">
+      <p class="sec-tag reveal">// 004 — ai_focus.py</p>
+
+      <div class="bento-grid">
+
+        <div class="bcard bcard-dark reveal" style="grid-column:span 12;padding:44px">
+          <h2 class="glitch" data-g="Agentic AI Workflows"
+              style="font-size:clamp(32px,5vw,58px);font-weight:900;margin-bottom:16px;color:#E0FB41">
+            Agentic AI Workflows
+          </h2>
+          <p style="font-size:16px;color:rgba(255,255,255,0.55);max-width:600px;line-height:1.9;margin-bottom:36px">
+            I don't just consume AI tools — I orchestrate them. RAG pipelines, multi-agent systems, and LLM-powered automation are my playground. Currently obsessed with building infrastructure that makes AI actually useful, not just impressive in demos.
+          </p>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px">
+            <div class="bcard bcard-lime" style="padding:20px">
+              <div style="font-size:24px;margin-bottom:10px">🔗</div>
+              <div style="font-weight:700;margin-bottom:6px;font-size:15px">LangChain</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,0.35)">LLM orchestration framework</div>
+            </div>
+            <div class="bcard bcard-cyan" style="padding:20px">
+              <div style="font-size:24px;margin-bottom:10px">📚</div>
+              <div style="font-weight:700;margin-bottom:6px;font-size:15px">RAG Pipelines</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,0.35)">Retrieval augmented generation</div>
+            </div>
+            <div class="bcard bcard-magenta" style="padding:20px">
+              <div style="font-size:24px;margin-bottom:10px">🤖</div>
+              <div style="font-weight:700;margin-bottom:6px;font-size:15px">AI Agents</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,0.35)">Autonomous task execution</div>
+            </div>
+            <div class="bcard bcard-yellow" style="padding:20px">
+              <div style="font-size:24px;margin-bottom:10px">⚙️</div>
+              <div style="font-weight:700;margin-bottom:6px;font-size:15px">n8n / Flowise</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,0.35)">Visual automation builders</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════
+      SECTION 6  /  CONTACT  /  MAXIMUM OVERDRIVE
+      ══════════════════════════════════════════════════ -->
+  <section id="contact">
+    <div class="container">
+      <p class="sec-tag reveal">// 005 — contact.sh</p>
+
+      <div class="bento-grid">
+
+        <div class="reveal" style="grid-column:span 5">
+          <h2 style="font-size:clamp(44px,7vw,76px);font-weight:900;line-height:0.9;margin-bottom:28px">
+            Let's<br>build<br><span class="glitch" data-g="something." style="color:#E0FB41">something.</span>
+          </h2>
+          <p style="color:rgba(255,255,255,0.45);font-size:14px;line-height:1.85;margin-bottom:32px;max-width:340px">
+            Got a wild idea? Need someone to actually ship it? I'm probably awake.
+          </p>
+          <a href="mailto:aaradhygaur22@gmail.com" class="social-link"><span>Email</span><span class="arrow">↗</span></a>
+          <a href="https://github.com/aaradhygaur22"   class="social-link" target="_blank"><span>⌥ GitHub</span><span class="arrow">↗</span></a>
+          <a href="https://www.linkedin.com/in/aaradhy-gaur-0569a6387/" class="social-link" target="_blank"><span>in LinkedIn</span><span class="arrow">↗</span></a>
+          <a href="#"  class="social-link" target="_blank"><span>𝕏 Twitter</span><span class="arrow">↗</span></a>
+        </div>
+
+        <div class="bcard reveal delay-2" style="grid-column:span 7;padding:36px">
+          <span class="sec-tag">// QUICK MESSAGE</span>
+          <h3 style="font-size:22px;font-weight:900;margin-bottom:24px">Drop a message.</h3>
+          <form id="contact-form" autocomplete="off">
+            <!-- Honeypot field - hidden from users -->
+            <input type="text" id="cf-website" style="display:none !important" tabindex="-1" autocomplete="off">
+            <input  id="cf-name"    class="cf-input" type="text"  placeholder="Name" required /><br>
+            <input  id="cf-email"   class="cf-input" type="email" placeholder="Email" required /><br>
+            <textarea id="cf-msg"   class="cf-input" placeholder="Tell me about the project..." required></textarea>
+            <button id="cf-submit" type="submit" class="btn btn-yellow" style="width:100%;text-align:center;padding:14px;cursor:none;border:none">
+              → Send It
+            </button>
+            <div id="cf-status" style="margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:12px;text-align:center;opacity:0;transition:opacity 0.4s"></div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- External Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- Main Script -->
+  <script src="script.js"></script>
+</body>
+</html>
